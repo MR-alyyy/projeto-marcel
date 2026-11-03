@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Fichário — Painel do Bibliotecário</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #efe7d6;
+    --paper-deep: #e6dcc4;
+    --ink-green: #1f3b2c;
+    --ink-green-2: #16291d;
+    --burgundy: #7a2331;
+    --burgundy-dark: #5e1a25;
+    --brass: #a9843c;
+    --ink: #2b241b;
+    --ink-soft: #5c5240;
+    --rule: #c9bfa0;
+    --ok-green: #3c6b46;
+    --warn-amber: #a9843c;
+    --white-card: #faf7ee;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--paper);
+    background-image:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.015) 0px, rgba(0,0,0,0.015) 1px, transparent 1px, transparent 3px);
+    color: var(--ink);
+    font-family: 'Source Sans 3', sans-serif;
+    min-height: 100vh;
+  }
+  .app{
+    display:flex;
+    min-height:100vh;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar{
+    width: 240px;
+    flex-shrink:0;
+    background: linear-gradient(180deg, var(--ink-green) 0%, var(--ink-green-2) 100%);
+    color: #e9e2cd;
+    padding: 28px 0 20px;
+    display:flex;
+    flex-direction:column;
+    position: sticky;
+    top:0;
+    height:100vh;
+  }
+  .brand{
+    padding: 0 24px 22px;
+    border-bottom: 1px solid rgba(233,226,205,0.15);
+    margin-bottom: 18px;
+  }
+  .brand .mark{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size: 27px;
+    letter-spacing: 0.2px;
+    color: #f2ecda;
+    line-height:1.1;
+  }
+  .brand .sub{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #a9b8a3;
+    margin-top:6px;
+  }
+  nav{ padding: 0 12px; display:flex; flex-direction:column; gap:3px;}
+  .nav-btn{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:none;
+    border:none;
+    color: #cfd6bf;
+    font-family:'Source Sans 3', sans-serif;
+    font-size:15px;
+    font-weight:500;
+    text-align:left;
+    padding: 11px 12px;
+    border-radius: 3px;
+    cursor:pointer;
+    position:relative;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .nav-btn .ico{ width:18px; text-align:center; font-size:15px; opacity:0.85;}
+  .nav-btn:hover{ background: rgba(233,226,205,0.08); color:#f2ecda;}
+  .nav-btn.active{
+    background: rgba(233,226,205,0.1);
+    color: #f7f1de;
+  }
+  .nav-btn.active::before{
+    content:"";
+    position:absolute;
+    left:-12px; top:8px; bottom:8px;
+    width:4px;
+    background: var(--brass);
+    border-radius: 0 3px 3px 0;
+  }
+  .sidebar-foot{
+    margin-top:auto;
+    padding: 16px 24px 0;
+    border-top: 1px solid rgba(233,226,205,0.15);
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    color: #8b9a85;
+    letter-spacing:0.4px;
+  }
+
+  /* ===== MAIN ===== */
+  main{
+    flex:1;
+    padding: 40px 48px 60px;
+    max-width: 1180px;
+  }
+  .page-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom: 30px;
+    flex-wrap:wrap;
+    gap:14px;
+  }
+  .page-head h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size: 32px;
+    margin:0 0 6px;
+    color: var(--ink-green);
+  }
+  .page-head p{
+    margin:0;
+    color: var(--ink-soft);
+    font-size:14.5px;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color: var(--brass);
+    margin: 0 0 8px;
+  }
+
+  /* stat cards */
+  .stats{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:16px;
+    margin-bottom: 32px;
+  }
+  .stat-card{
+    background: var(--white-card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 16px 18px;
+    position:relative;
+  }
+  .stat-card::after{
+    content:"";
+    position:absolute; top:0; left:0; bottom:0; width:3px;
+    background: var(--stat-color, var(--brass));
+  }
+  .stat-card .num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 30px;
+    font-weight:600;
+    color: var(--ink-green);
+    line-height:1;
+  }
+  .stat-card .lbl{
+    margin-top:8px;
+    font-size:12.5px;
+    color: var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing: 0.6px;
+  }
+
+  /* card / panel */
+  .card{
+    background: var(--white-card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+  }
+
+  /* table (ledger) */
+  .table-wrap{ overflow-x:auto; }
+  table{ width:100%; border-collapse:collapse; min-width: 760px;}
+  thead th{
+    text-align:left;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--ink-green);
+    padding: 14px 16px;
+    border-bottom: 2px solid var(--ink-green);
+    background: #e9e1cb;
+  }
+  tbody td{
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--rule);
+    font-size: 14.5px;
+    vertical-align: middle;
+  }
+  tbody tr:hover{ background: rgba(122,35,49,0.04); }
+  tbody tr:last-child td{ border-bottom:none; }
+  td.num, th.num{ font-family:'IBM Plex Mono', monospace; text-align:center; }
+  .book-title{ font-weight:600; color:var(--ink); }
+  .book-author{ display:block; font-size:12.5px; color:var(--ink-soft); margin-top:2px; }
+
+  .stamp{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1.5px solid currentColor;
+    transform: rotate(-2deg);
+  }
+  .stamp.avail{ color: var(--ok-green); }
+  .stamp.low{ color: var(--warn-amber); }
+  .stamp.none{ color: var(--burgundy); }
+
+  .row-actions{ display:flex; gap:8px; justify-content:flex-end; }
+  .mini-btn{
+    font-family:'Source Sans 3', sans-serif;
+    font-size: 12.5px;
+    font-weight:600;
+    padding: 6px 10px;
+    border-radius: 3px;
+    border: 1px solid var(--rule);
+    background: #fff;
+    color: var(--ink-green);
+    cursor:pointer;
+    transition: all 0.12s ease;
+  }
+  .mini-btn:hover{ border-color: var(--ink-green); background:#f3efe1; }
+  .mini-btn:disabled{ opacity:0.35; cursor:not-allowed; }
+  .mini-btn.danger:hover{ border-color: var(--burgundy); color: var(--burgundy); }
+
+  .table-toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding: 18px 20px;
+    gap:12px;
+    flex-wrap:wrap;
+    border-bottom: 1px solid var(--rule);
+  }
+  .search-input{
+    font-family:'Source Sans 3', sans-serif;
+    font-size:14px;
+    padding: 9px 12px;
+    border-radius:3px;
+    border:1px solid var(--rule);
+    background:#fff;
+    min-width:240px;
+  }
+  .search-input:focus{ outline:2px solid var(--brass); outline-offset:1px; }
+
+  /* forms */
+  .form-card{ padding: 28px 32px; max-width: 640px; }
+  .form-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 20px;
+    margin-bottom: 20px;
+  }
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field.full{ grid-column: 1 / -1; }
+  .field label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform:uppercase;
+    color: var(--ink-soft);
+  }
+  .field input, .field select{
+    font-family:'Source Sans 3', sans-serif;
+    font-size: 15px;
+    padding: 10px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: #fff;
+    color: var(--ink);
+  }
+  .field input:focus, .field select:focus{
+    outline: 2px solid var(--brass);
+    outline-offset: 1px;
+    border-color: var(--brass);
+  }
+  .form-actions{ display:flex; align-items:center; gap:14px; }
+  .btn-primary{
+    font-family:'Source Sans 3', sans-serif;
+    font-weight:700;
+    font-size: 15px;
+    padding: 11px 22px;
+    border-radius: 3px;
+    border: none;
+    background: var(--burgundy);
+    color: #f7f1de;
+    cursor:pointer;
+    transition: background 0.15s ease;
+  }
+  .btn-primary:hover{ background: var(--burgundy-dark); }
+  .btn-primary:focus-visible{ outline:2px solid var(--brass); outline-offset:2px; }
+  .form-msg{ font-size:13.5px; color: var(--ok-green); font-weight:600; }
+
+  .divider-label{
+    display:flex; align-items:center; gap:12px;
+    margin: 6px 0 20px;
+    color: var(--brass);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+  }
+  .divider-label::after{ content:""; flex:1; height:1px; background: var(--rule); }
+
+  /* funcionarios list */
+  .staff-list{ padding: 8px 0; }
+  .staff-row{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .staff-row:last-child{ border-bottom:none; }
+  .avatar{
+    width:42px; height:42px; border-radius:50%;
+    background: var(--ink-green);
+    color:#f2ecda;
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px;
+    flex-shrink:0;
+  }
+  .staff-info{ flex:1; }
+  .staff-info .name{ font-weight:600; color:var(--ink); }
+  .staff-info .role{ font-size:13px; color:var(--ink-soft); margin-top:2px;}
+  .staff-meta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    text-align:right;
+  }
+
+  .empty-state{
+    padding: 60px 24px;
+    text-align:center;
+    color: var(--ink-soft);
+  }
+  .empty-state .glyph{ font-size: 34px; margin-bottom:10px; opacity:0.5; }
+  .empty-state p{ margin:4px 0; font-size:14.5px; }
+
+  .toast{
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--ink-green);
+    color:#f2ecda;
+    padding: 12px 18px;
+    border-radius: 4px;
+    font-size: 13.5px;
+    font-weight:600;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    transform: translateY(20px);
+    opacity:0;
+    transition: all 0.25s ease;
+    pointer-events:none;
+    z-index: 50;
+  }
+  .toast.show{ transform: translateY(0); opacity:1; }
+
+  ::selection{ background: var(--brass); color: #fff; }
+
+  @media (max-width: 880px){
+    .app{ flex-direction:column; }
+    .sidebar{ width:100%; height:auto; position:relative; flex-direction:row; align-items:center; padding:16px; overflow-x:auto; }
+    .brand{ border:none; padding:0 16px 0 0; margin:0; }
+    nav{ flex-direction:row; padding:0; }
+    .sidebar-foot{ display:none; }
+    main{ padding: 24px 20px 40px; }
+    .stats{ grid-template-columns: 1fr 1fr; }
+    .form-grid{ grid-template-columns: 1fr; }
+  }
+</style>
+<link rel="stylesheet" href="biblioteca-ui.css">
+</head>
+<body class="ui-theme">
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark">Fichário</div>
+      <div class="sub">Painel do bibliotecário</div>
+    </div>
+    <nav id="nav">
+      <button class="nav-btn active" data-view="acervo"><span class="ico">&#9776;</span> Acervo</button>
+      <button class="nav-btn" data-view="cadastro-livro"><span class="ico">&#128214;</span> Cadastrar livro</button>
+      <button class="nav-btn" data-view="cadastro-funcionario"><span class="ico">&#128100;</span> Cadastrar funcionário</button>
+      <button class="nav-btn" data-view="funcionarios"><span class="ico">&#9776;</span> Funcionários</button>
+      <a class="nav-btn" href="logout.php"><span class="ico">&#10162;</span> Sair</a>
+    </nav>
+    <div class="sidebar-foot">Dados salvos<br>automaticamente</div>
+  </aside>
+
+  <main>
+    <!-- ===== VIEW: ACERVO (planilha) ===== -->
+    <section id="view-acervo">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Catálogo geral</div>
+          <h1>Acervo da biblioteca</h1>
+          <p>Consulte quantidade, empréstimos, devoluções e disponibilidade de cada título.</p>
+        </div>
+      </div>
+
+      <div class="stats" id="stats"></div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th class="num">Total</th>
+                <th class="num">Emprestados</th>
+                <th class="num">Devolvidos</th>
+                <th class="num">Disponíveis</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="books-tbody"></tbody>
+          </table>
+        </div>
+        <div id="books-empty" style="display:none;" class="empty-state">
+          <div class="glyph">&#128218;</div>
+          <p><strong>O acervo está vazio.</strong></p>
+          <p>Cadastre o primeiro livro para começar a controlar empréstimos.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== VIEW: CADASTRO LIVRO ===== -->
+    <section id="view-cadastro-livro" style="display:none;">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Novo título</div>
+          <h1>Cadastrar livro</h1>
+          <p>Adicione um título ao acervo com a quantidade de exemplares disponíveis.</p>
+        </div>
+      </div>
+      <div class="card form-card">
+        <form id="form-livro">
+          <div class="form-grid">
+            <div class="field full">
+              <label for="l-titulo">Título</label>
+              <input id="l-titulo" type="text" placeholder="Ex.: Dom Casmurro" required>
+            </div>
+            <div class="field">
+              <label for="l-autor">Autor</label>
+              <input id="l-autor" type="text" placeholder="Ex.: Machado de Assis" required>
+            </div>
+            <div class="field">
+              <label for="l-genero">Gênero</label>
+              <input id="l-genero" type="text" placeholder="Ex.: Romance">
+            </div>
+            <div class="field">
+              <label for="l-isbn">ISBN (opcional)</label>
+              <input id="l-isbn" type="text" placeholder="978-0-000000-0-0">
+            </div>
+            <div class="field">
+              <label for="l-quantidade">Quantidade de exemplares</label>
+              <input id="l-quantidade" type="number" min="1" step="1" value="1" required>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">Cadastrar livro</button>
+            <span class="form-msg" id="l-msg"></span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ===== VIEW: CADASTRO FUNCIONARIO ===== -->
+    <section id="view-cadastro-funcionario" style="display:none;">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Novo colaborador</div>
+          <h1>Cadastrar funcionário</h1>
+          <p>Registre quem atua no balcão de atendimento e controle de acervo.</p>
+        </div>
+      </div>
+      <div class="card form-card">
+        <form id="form-func">
+          <div class="form-grid">
+            <div class="field full">
+              <label for="f-nome">Nome completo</label>
+              <input id="f-nome" type="text" placeholder="Ex.: Maria Oliveira" required>
+            </div>
+            <div class="field">
+              <label for="f-cargo">Cargo</label>
+              <select id="f-cargo" required>
+                <option value="">Selecione</option>
+                <option>Bibliotecário(a)</option>
+                <option>Auxiliar de biblioteca</option>
+                <option>Atendente</option>
+                <option>Estagiário(a)</option>
+                <option>Coordenador(a)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-matricula">Matrícula</label>
+              <input id="f-matricula" type="text" placeholder="Ex.: 00123">
+            </div>
+            <div class="field">
+              <label for="f-telefone">Telefone</label>
+              <input id="f-telefone" type="text" placeholder="(00) 00000-0000">
+            </div>
+            <div class="field">
+              <label for="f-email">E-mail</label>
+              <input id="f-email" type="email" placeholder="nome@biblioteca.com">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">Cadastrar funcionário</button>
+            <span class="form-msg" id="f-msg"></span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ===== VIEW: FUNCIONARIOS LIST ===== -->
+    <section id="view-funcionarios" style="display:none;">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Equipe</div>
+          <h1>Funcionários cadastrados</h1>
+          <p>Todos os colaboradores com acesso ao balcão da biblioteca.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="staff-list" id="staff-list"></div>
+        <div id="staff-empty" style="display:none;" class="empty-state">
+          <div class="glyph">&#128100;</div>
+          <p><strong>Nenhum funcionário cadastrado.</strong></p>
+          <p>Use "Cadastrar funcionário" no menu lateral.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_BOOKS = "biblioteca:livros";
+  var STORAGE_STAFF = "biblioteca:funcionarios";
+
+  var books = [];
+  var staff = [];
+
+  // ---------- storage helpers ----------
+  function hasStorage(){ return typeof window.storage !== "undefined"; }
+
+  async function loadData(){
+    if (!hasStorage()){
+      seedDemoData();
+      renderAll();
+      return;
+    }
+    try{
+      var b = await window.storage.get(STORAGE_BOOKS, false);
+      books = b && b.value ? JSON.parse(b.value) : null;
+    }catch(e){ books = null; }
+    try{
+      var f = await window.storage.get(STORAGE_STAFF, false);
+      staff = f && f.value ? JSON.parse(f.value) : null;
+    }catch(e){ staff = null; }
+
+    if (books === null || staff === null){
+      seedDemoData();
+      await persistBooks();
+      await persistStaff();
+    }
+    renderAll();
+  }
+
+  function seedDemoData(){
+    books = [
+      { id: uid(), titulo: "Dom Casmurro", autor: "Machado de Assis", genero: "Romance", isbn: "", quantidade: 5, emprestados: 2, devolvidos: 6 },
+      { id: uid(), titulo: "O Cortiço", autor: "Aluísio Azevedo", genero: "Naturalismo", isbn: "", quantidade: 3, emprestados: 3, devolvidos: 4 },
+      { id: uid(), titulo: "Grande Sertão: Veredas", autor: "Guimarães Rosa", genero: "Romance", isbn: "", quantidade: 4, emprestados: 0, devolvidos: 2 }
+    ];
+    staff = [
+      { id: uid(), nome: "Maria Oliveira", cargo: "Bibliotecário(a)", matricula: "00123", telefone: "(11) 98888-1234", email: "maria@biblioteca.com" }
+    ];
+  }
+
+  async function persistBooks(){
+    if (!hasStorage()) return;
+    try{ await window.storage.set(STORAGE_BOOKS, JSON.stringify(books), false); }
+    catch(e){ console.error("Falha ao salvar livros", e); }
+  }
+  async function persistStaff(){
+    if (!hasStorage()) return;
+    try{ await window.storage.set(STORAGE_STAFF, JSON.stringify(staff), false); }
+    catch(e){ console.error("Falha ao salvar funcionários", e); }
+  }
+
+  function uid(){ return Math.random().toString(36).slice(2,10); }
+
+  // ---------- navigation ----------
+  var views = ["acervo","cadastro-livro","cadastro-funcionario","funcionarios"];
+  document.getElementById("nav").addEventListener("click", function(e){
+    var btn = e.target.closest(".nav-btn");
+    if (!btn) return;
+    var target = btn.getAttribute("data-view");
+    views.forEach(function(v){
+      document.getElementById("view-"+v).style.display = (v === target) ? "" : "none";
+    });
+    document.querySelectorAll(".nav-btn").forEach(function(b){ b.classList.toggle("active", b === btn); });
+  });
+
+  // ---------- toast ----------
+  var toastTimer;
+  function showToast(msg){
+    var t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2600);
+  }
+
+  // ---------- render: stats ----------
+  function renderStats(){
+    var totalTitulos = books.length;
+    var totalExemplares = books.reduce(function(s,b){ return s + Number(b.quantidade); }, 0);
+    var totalEmprestados = books.reduce(function(s,b){ return s + Number(b.emprestados); }, 0);
+    var totalDisponiveis = books.reduce(function(s,b){ return s + Math.max(0, Number(b.quantidade) - Number(b.emprestados)); }, 0);
+
+    var el = document.getElementById("stats");
+    el.innerHTML =
+      statCard(totalTitulos, "Títulos no acervo", "var(--ink-green)") +
+      statCard(totalExemplares, "Exemplares totais", "var(--brass)") +
+      statCard(totalEmprestados, "Emprestados agora", "var(--burgundy)") +
+      statCard(totalDisponiveis, "Disponíveis agora", "var(--ok-green)");
+  }
+  function statCard(num, lbl, color){
+    return '<div class="stat-card" style="--stat-color:'+color+'">'+
+      '<div class="num">'+num+'</div>'+
+      '<div class="lbl">'+lbl+'</div>'+
+    '</div>';
+  }
+
+  // ---------- render: books table ----------
+  function renderBooks(){
+    var tbody = document.getElementById("books-tbody");
+    var emptyEl = document.getElementById("books-empty");
+    tbody.innerHTML = "";
+
+    if (books.length === 0){
+      emptyEl.style.display = "";
+      renderStats();
+      return;
+    }
+    emptyEl.style.display = "none";
+
+    books.forEach(function(b){
+      var disponiveis = Math.max(0, Number(b.quantidade) - Number(b.emprestados));
+      var statusHtml;
+      if (disponiveis === 0){
+        statusHtml = '<span class="stamp none">Esgotado</span>';
+      } else if (disponiveis <= Math.max(1, Math.ceil(Number(b.quantidade) * 0.25))){
+        statusHtml = '<span class="stamp low">Poucas cópias</span>';
+      } else {
+        statusHtml = '<span class="stamp avail">Disponível</span>';
+      }
+
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td><span class="book-title">'+escapeHtml(b.titulo)+'</span>'+
+          '<span class="book-author">'+escapeHtml(b.autor || "Autor não informado")+'</span></td>'+
+        '<td class="num">'+b.quantidade+'</td>'+
+        '<td class="num">'+b.emprestados+'</td>'+
+        '<td class="num">'+b.devolvidos+'</td>'+
+        '<td class="num">'+disponiveis+'</td>'+
+        '<td>'+statusHtml+'</td>'+
+        '<td><div class="row-actions">'+
+          '<button class="mini-btn" data-action="emprestar" data-id="'+b.id+'" '+(disponiveis<=0?"disabled":"")+'>Emprestar</button>'+
+          '<button class="mini-btn" data-action="devolver" data-id="'+b.id+'" '+(b.emprestados<=0?"disabled":"")+'>Devolver</button>'+
+          '<button class="mini-btn danger" data-action="remover" data-id="'+b.id+'">Remover</button>'+
+        '</div></td>';
+      tbody.appendChild(tr);
+    });
+
+    renderStats();
+  }
+
+  document.getElementById("books-tbody").addEventListener("click", function(e){
+    var btn = e.target.closest(".mini-btn");
+    if (!btn) return;
+    var id = btn.getAttribute("data-id");
+    var action = btn.getAttribute("data-action");
+    var book = books.find(function(b){ return b.id === id; });
+    if (!book) return;
+
+    if (action === "emprestar"){
+      var disponiveis = Number(book.quantidade) - Number(book.emprestados);
+      if (disponiveis > 0){
+        book.emprestados += 1;
+        showToast('"'+book.titulo+'" emprestado.');
+      }
+    } else if (action === "devolver"){
+      if (book.emprestados > 0){
+        book.emprestados -= 1;
+        book.devolvidos += 1;
+        showToast('"'+book.titulo+'" devolvido.');
+      }
+    } else if (action === "remover"){
+      books = books.filter(function(b){ return b.id !== id; });
+      showToast("Livro removido do acervo.");
+    }
+    renderBooks();
+    persistBooks();
+  });
+
+  // ---------- render: staff ----------
+  function renderStaff(){
+    var list = document.getElementById("staff-list");
+    var emptyEl = document.getElementById("staff-empty");
+    list.innerHTML = "";
+
+    if (staff.length === 0){
+      emptyEl.style.display = "";
+      return;
+    }
+    emptyEl.style.display = "none";
+
+    staff.forEach(function(f){
+      var initials = (f.nome || "?").trim().split(/\s+/).slice(0,2).map(function(w){ return w[0]; }).join("").toUpperCase();
+      var row = document.createElement("div");
+      row.className = "staff-row";
+      row.innerHTML =
+        '<div class="avatar">'+initials+'</div>'+
+        '<div class="staff-info">'+
+          '<div class="name">'+escapeHtml(f.nome)+'</div>'+
+          '<div class="role">'+escapeHtml(f.cargo || "Cargo não informado")+(f.matricula ? " · Mat. "+escapeHtml(f.matricula) : "")+'</div>'+
+        '</div>'+
+        '<div class="staff-meta">'+(f.telefone ? escapeHtml(f.telefone)+'<br>' : '')+(f.email ? escapeHtml(f.email) : '')+'</div>'+
+        '<button class="mini-btn danger" data-action="remover-func" data-id="'+f.id+'">Remover</button>';
+      list.appendChild(row);
+    });
+  }
+
+  document.getElementById("staff-list").addEventListener("click", function(e){
+    var btn = e.target.closest(".mini-btn");
+    if (!btn) return;
+    var id = btn.getAttribute("data-id");
+    staff = staff.filter(function(f){ return f.id !== id; });
+    renderStaff();
+    persistStaff();
+    showToast("Funcionário removido.");
+  });
+
+  // ---------- forms ----------
+  document.getElementById("form-livro").addEventListener("submit", function(e){
+    e.preventDefault();
+    var titulo = document.getElementById("l-titulo").value.trim();
+    var autor = document.getElementById("l-autor").value.trim();
+    var genero = document.getElementById("l-genero").value.trim();
+    var isbn = document.getElementById("l-isbn").value.trim();
+    var quantidade = parseInt(document.getElementById("l-quantidade").value, 10) || 1;
+
+    if (!titulo || !autor){ return; }
+
+    books.push({ id: uid(), titulo: titulo, autor: autor, genero: genero, isbn: isbn, quantidade: quantidade, emprestados: 0, devolvidos: 0 });
+    persistBooks();
+    renderBooks();
+
+    document.getElementById("form-livro").reset();
+    document.getElementById("l-quantidade").value = 1;
+    var msg = document.getElementById("l-msg");
+    msg.textContent = '"'+titulo+'" cadastrado com sucesso.';
+    setTimeout(function(){ msg.textContent = ""; }, 3000);
+    showToast("Livro cadastrado no acervo.");
+  });
+
+  document.getElementById("form-func").addEventListener("submit", function(e){
+    e.preventDefault();
+    var nome = document.getElementById("f-nome").value.trim();
+    var cargo = document.getElementById("f-cargo").value;
+    var matricula = document.getElementById("f-matricula").value.trim();
+    var telefone = document.getElementById("f-telefone").value.trim();
+    var email = document.getElementById("f-email").value.trim();
+
+    if (!nome || !cargo){ return; }
+
+    staff.push({ id: uid(), nome: nome, cargo: cargo, matricula: matricula, telefone: telefone, email: email });
+    persistStaff();
+    renderStaff();
+
+    document.getElementById("form-func").reset();
+    var msg = document.getElementById("f-msg");
+    msg.textContent = nome+" cadastrado(a) com sucesso.";
+    setTimeout(function(){ msg.textContent = ""; }, 3000);
+    showToast("Funcionário cadastrado.");
+  });
+
+  function escapeHtml(str){
+    return String(str == null ? "" : str)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
+
+  function renderAll(){
+    renderBooks();
+    renderStaff();
+  }
+
+  loadData();
+})();
+</script>
+</body>
+</html>
