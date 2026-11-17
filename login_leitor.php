@@ -17,7 +17,7 @@ if (isset($_POST['entrar'])) {
 
         // A tabela correta é "leitores"
         $stmt = $conexao->prepare(
-            "SELECT nome, senha FROM leitores WHERE nome = ?"
+            "SELECT id, nome, senha FROM leitores WHERE nome = ?"
         );
 
         $stmt->bind_param("s", $nome);
@@ -31,6 +31,7 @@ if (isset($_POST['entrar'])) {
             if (password_verify($senha, $usuario['senha'])) {
 
                 $_SESSION['tipo'] = "leitor";
+                $_SESSION['id_leitor'] = (int) $usuario['id'];
                 $_SESSION['nome'] = $usuario['nome'];
 
                 $stmt->close();

@@ -385,6 +385,32 @@
   }
   .toast.show{ transform: translateY(0); opacity:1; }
 
+  dialog{
+    width:min(440px, calc(100% - 32px));
+    padding:28px 32px;
+    border:1px solid var(--rule);
+    border-radius:4px;
+    background:var(--white-card);
+    color:var(--ink);
+    box-shadow:0 12px 36px rgba(0,0,0,0.3);
+  }
+  dialog::backdrop{ background:rgba(22,41,29,0.58); }
+  dialog h2{
+    margin:0 0 20px;
+    color:var(--ink-green);
+    font-family:'Fraunces',serif;
+  }
+  dialog .form-actions{ justify-content:flex-end; margin-top:20px; }
+  dialog select{
+    width:100%;
+    font:15px 'Source Sans 3',sans-serif;
+    padding:10px 12px;
+    border:1px solid var(--rule);
+    border-radius:3px;
+    background:#fff;
+    color:var(--ink);
+  }
+
   ::selection{ background: var(--brass); color: #fff; }
 
   @media (max-width: 880px){
@@ -411,6 +437,7 @@
     <nav id="nav">
       <button class="nav-btn active" data-view="acervo"><span class="ico">&#9776;</span> Acervo</button>
       <button class="nav-btn" data-view="cadastro-livro"><span class="ico">&#128214;</span> Cadastrar livro</button>
+      <button class="nav-btn" data-view="cadastro-cliente"><span class="ico">&#128100;</span> Cadastrar cliente</button>
       <button class="nav-btn" data-view="cadastro-funcionario"><span class="ico">&#128100;</span> Cadastrar funcionário</button>
       <button class="nav-btn" data-view="funcionarios"><span class="ico">&#9776;</span> Funcionários</button>
       <a class="nav-btn" href="logout.php"><span class="ico">&#10162;</span> Sair</a>
@@ -470,19 +497,15 @@
           <div class="form-grid">
             <div class="field full">
               <label for="l-titulo">Título</label>
-              <input id="l-titulo" type="text" placeholder="Ex.: Dom Casmurro" required>
+              <input id="l-titulo" type="text" maxlength="30" placeholder="Ex.: Dom Casmurro" required>
             </div>
             <div class="field">
               <label for="l-autor">Autor</label>
-              <input id="l-autor" type="text" placeholder="Ex.: Machado de Assis" required>
+              <input id="l-autor" type="text" maxlength="30" placeholder="Ex.: Machado de Assis" required>
             </div>
             <div class="field">
               <label for="l-genero">Gênero</label>
-              <input id="l-genero" type="text" placeholder="Ex.: Romance">
-            </div>
-            <div class="field">
-              <label for="l-isbn">ISBN (opcional)</label>
-              <input id="l-isbn" type="text" placeholder="978-0-000000-0-0">
+              <input id="l-genero" type="text" maxlength="15" placeholder="Ex.: Romance">
             </div>
             <div class="field">
               <label for="l-quantidade">Quantidade de exemplares</label>
@@ -492,6 +515,52 @@
           <div class="form-actions">
             <button type="submit" class="btn-primary">Cadastrar livro</button>
             <span class="form-msg" id="l-msg"></span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ===== VIEW: CADASTRO CLIENTE ===== -->
+    <section id="view-cadastro-cliente" style="display:none;">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Novo cliente</div>
+          <h1>Cadastrar cliente</h1>
+          <p>Cadastre clientes para associar empréstimos e devoluções.</p>
+        </div>
+      </div>
+      <div class="card form-card">
+        <form id="form-cliente">
+          <div class="form-grid">
+            <div class="field full">
+              <label for="c-nome">Nome completo</label>
+              <input id="c-nome" type="text" maxlength="30" placeholder="Ex.: Ana Souza" required>
+            </div>
+            <div class="field">
+              <label for="c-telefone">Telefone</label>
+              <input id="c-telefone" type="tel" maxlength="15" placeholder="(00) 00000-0000" required>
+            </div>
+            <div class="field">
+              <label for="c-email">E-mail</label>
+              <input id="c-email" type="email" placeholder="nome@email.com">
+            </div>
+            <div class="field">
+              <label for="c-cpf">CPF</label>
+              <input id="c-cpf" type="text" maxlength="14" placeholder="000.000.000-00" required>
+            </div>
+            <div class="field">
+              <label for="c-endereco">Endereço</label>
+              <input id="c-endereco" type="text" maxlength="60" required>
+            </div>
+            <div class="field full">
+              <label for="c-senha">Senha</label>
+              <input id="c-senha" type="password" autocomplete="new-password" minlength="8" required>
+              <small>Use letra maiúscula, minúscula, número e símbolo.</small>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">Cadastrar cliente</button>
+            <span class="form-msg" id="c-msg"></span>
           </div>
         </form>
       </div>
@@ -511,18 +580,7 @@
           <div class="form-grid">
             <div class="field full">
               <label for="f-nome">Nome completo</label>
-              <input id="f-nome" type="text" placeholder="Ex.: Maria Oliveira" required>
-            </div>
-            <div class="field">
-              <label for="f-cargo">Cargo</label>
-              <select id="f-cargo" required>
-                <option value="">Selecione</option>
-                <option>Bibliotecário(a)</option>
-                <option>Auxiliar de biblioteca</option>
-                <option>Atendente</option>
-                <option>Estagiário(a)</option>
-                <option>Coordenador(a)</option>
-              </select>
+              <input id="f-nome" type="text" maxlength="30" placeholder="Ex.: Maria Oliveira" required>
             </div>
             <div class="field">
               <label for="f-matricula">Matrícula</label>
@@ -530,11 +588,20 @@
             </div>
             <div class="field">
               <label for="f-telefone">Telefone</label>
-              <input id="f-telefone" type="text" placeholder="(00) 00000-0000">
+              <input id="f-telefone" type="tel" maxlength="15" placeholder="(00) 00000-0000" required>
+            </div>
+            <div class="field">
+              <label for="f-cpf">CPF</label>
+              <input id="f-cpf" type="text" maxlength="14" placeholder="000.000.000-00" required>
             </div>
             <div class="field">
               <label for="f-email">E-mail</label>
               <input id="f-email" type="email" placeholder="nome@biblioteca.com">
+            </div>
+            <div class="field full">
+              <label for="f-senha">Senha</label>
+              <input id="f-senha" type="password" autocomplete="new-password" minlength="8" required>
+              <small>Use letra maiúscula, minúscula, número e símbolo.</small>
             </div>
           </div>
           <div class="form-actions">
@@ -568,68 +635,119 @@
 
 <div class="toast" id="toast"></div>
 
+<dialog id="loan-dialog" aria-labelledby="loan-dialog-title">
+  <form id="loan-form">
+    <h2 id="loan-dialog-title"></h2>
+    <div class="field">
+      <label id="loan-select-label" for="loan-person"></label>
+      <select id="loan-person" required></select>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="mini-btn" id="loan-cancel">Cancelar</button>
+      <button type="submit" class="btn-primary" id="loan-confirm"></button>
+    </div>
+  </form>
+</dialog>
+
 <script>
 (function(){
   "use strict";
 
-  var STORAGE_BOOKS = "biblioteca:livros";
-  var STORAGE_STAFF = "biblioteca:funcionarios";
-
   var books = [];
   var staff = [];
+  var clients = [];
+  var loans = [];
 
-  // ---------- storage helpers ----------
-  function hasStorage(){ return typeof window.storage !== "undefined"; }
-
-  async function loadData(){
-    if (!hasStorage()){
-      seedDemoData();
-      renderAll();
-      return;
+  async function apiRequest(action, data){
+    var options = {
+      method: data ? "POST" : "GET",
+      credentials: "same-origin",
+      headers: {}
+    };
+    if (data){
+      options.headers["Content-Type"] = "application/json";
+      options.body = JSON.stringify(data);
     }
-    try{
-      var b = await window.storage.get(STORAGE_BOOKS, false);
-      books = b && b.value ? JSON.parse(b.value) : null;
-    }catch(e){ books = null; }
-    try{
-      var f = await window.storage.get(STORAGE_STAFF, false);
-      staff = f && f.value ? JSON.parse(f.value) : null;
-    }catch(e){ staff = null; }
 
-    if (books === null || staff === null){
-      seedDemoData();
-      await persistBooks();
-      await persistStaff();
+    var response = await fetch("bibliotecario_api.php?action=" + encodeURIComponent(action), options);
+    var result;
+    try{
+      result = await response.json();
+    }catch(error){
+      throw new Error("O servidor retornou uma resposta inválida.");
     }
+    if (response.status === 401){
+      window.location.assign("login_bibliotecario.php");
+      throw new Error(result.message || "Faça login como bibliotecário para continuar.");
+    }
+    if (!response.ok){
+      throw new Error(result.message || "Não foi possível concluir a operação.");
+    }
+    return result;
+  }
+
+  async function refreshData(){
+    var result = await apiRequest("listar");
+    books = result.books.map(function(book){
+      book.id = String(book.id);
+      book.quantidade = Number(book.quantidade);
+      book.devolvidos = Number(book.devolvidos);
+      return book;
+    });
+    staff = result.staff.map(function(person){
+      person.id = String(person.id);
+      return person;
+    });
+    clients = result.clients.map(function(person){
+      person.id = String(person.id);
+      return person;
+    });
+    loans = result.loans.map(function(loan){
+      loan.id = String(loan.id);
+      loan.bookId = String(loan.bookId);
+      loan.clientId = String(loan.clientId);
+      return loan;
+    });
     renderAll();
   }
 
-  function seedDemoData(){
-    books = [
-      { id: uid(), titulo: "Dom Casmurro", autor: "Machado de Assis", genero: "Romance", isbn: "", quantidade: 5, emprestados: 2, devolvidos: 6 },
-      { id: uid(), titulo: "O Cortiço", autor: "Aluísio Azevedo", genero: "Naturalismo", isbn: "", quantidade: 3, emprestados: 3, devolvidos: 4 },
-      { id: uid(), titulo: "Grande Sertão: Veredas", autor: "Guimarães Rosa", genero: "Romance", isbn: "", quantidade: 4, emprestados: 0, devolvidos: 2 }
-    ];
-    staff = [
-      { id: uid(), nome: "Maria Oliveira", cargo: "Bibliotecário(a)", matricula: "00123", telefone: "(11) 98888-1234", email: "maria@biblioteca.com" }
-    ];
+  async function loadData(){
+    try{
+      await refreshData();
+    }catch(error){
+      console.error("Falha ao carregar os dados do banco", error);
+      showToast(error.message || "Falha ao carregar os dados do banco.");
+      renderAll();
+    }
   }
 
-  async function persistBooks(){
-    if (!hasStorage()) return;
-    try{ await window.storage.set(STORAGE_BOOKS, JSON.stringify(books), false); }
-    catch(e){ console.error("Falha ao salvar livros", e); }
-  }
-  async function persistStaff(){
-    if (!hasStorage()) return;
-    try{ await window.storage.set(STORAGE_STAFF, JSON.stringify(staff), false); }
-    catch(e){ console.error("Falha ao salvar funcionários", e); }
+  async function saveData(action, data){
+    try{
+      await apiRequest(action, data);
+    }catch(error){
+      console.error("Falha ao salvar no banco", error);
+      showToast(error.message || "Falha ao salvar no banco de dados.");
+      return false;
+    }
+    try{
+      await refreshData();
+    }catch(error){
+      console.error("A alteração foi salva, mas os dados não puderam ser atualizados", error);
+      showToast("Alteração salva, mas não foi possível atualizar a tela.");
+    }
+    return true;
   }
 
-  function uid(){ return Math.random().toString(36).slice(2,10); }
+  function countLoans(bookId){
+    return loans.filter(function(loan){ return loan.bookId === bookId; }).length;
+  }
+  function formatLoanDate(value){
+    var match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value));
+    return match ? match[3] + "/" + match[2] + "/" + match[1] : new Date(value).toLocaleDateString("pt-BR");
+  }
 
   // ---------- navigation ----------
-  var views = ["acervo","cadastro-livro","cadastro-funcionario","funcionarios"];
+  var views = ["acervo","cadastro-livro","cadastro-cliente","cadastro-funcionario","funcionarios"];
   document.getElementById("nav").addEventListener("click", function(e){
     var btn = e.target.closest(".nav-btn");
     if (!btn) return;
@@ -654,8 +772,8 @@
   function renderStats(){
     var totalTitulos = books.length;
     var totalExemplares = books.reduce(function(s,b){ return s + Number(b.quantidade); }, 0);
-    var totalEmprestados = books.reduce(function(s,b){ return s + Number(b.emprestados); }, 0);
-    var totalDisponiveis = books.reduce(function(s,b){ return s + Math.max(0, Number(b.quantidade) - Number(b.emprestados)); }, 0);
+    var totalEmprestados = loans.length;
+    var totalDisponiveis = books.reduce(function(s,b){ return s + Math.max(0, Number(b.quantidade) - countLoans(b.id)); }, 0);
 
     var el = document.getElementById("stats");
     el.innerHTML =
@@ -685,7 +803,8 @@
     emptyEl.style.display = "none";
 
     books.forEach(function(b){
-      var disponiveis = Math.max(0, Number(b.quantidade) - Number(b.emprestados));
+      var emprestados = countLoans(b.id);
+      var disponiveis = Math.max(0, Number(b.quantidade) - emprestados);
       var statusHtml;
       if (disponiveis === 0){
         statusHtml = '<span class="stamp none">Esgotado</span>';
@@ -700,13 +819,13 @@
         '<td><span class="book-title">'+escapeHtml(b.titulo)+'</span>'+
           '<span class="book-author">'+escapeHtml(b.autor || "Autor não informado")+'</span></td>'+
         '<td class="num">'+b.quantidade+'</td>'+
-        '<td class="num">'+b.emprestados+'</td>'+
+        '<td class="num">'+emprestados+'</td>'+
         '<td class="num">'+b.devolvidos+'</td>'+
         '<td class="num">'+disponiveis+'</td>'+
         '<td>'+statusHtml+'</td>'+
         '<td><div class="row-actions">'+
-          '<button class="mini-btn" data-action="emprestar" data-id="'+b.id+'" '+(disponiveis<=0?"disabled":"")+'>Emprestar</button>'+
-          '<button class="mini-btn" data-action="devolver" data-id="'+b.id+'" '+(b.emprestados<=0?"disabled":"")+'>Devolver</button>'+
+          '<button class="mini-btn" data-action="emprestar" data-id="'+b.id+'" '+(disponiveis<=0 || clients.length===0?"disabled":"")+'>Emprestar</button>'+
+          '<button class="mini-btn" data-action="devolver" data-id="'+b.id+'" '+(emprestados<=0?"disabled":"")+'>Devolver</button>'+
           '<button class="mini-btn danger" data-action="remover" data-id="'+b.id+'">Remover</button>'+
         '</div></td>';
       tbody.appendChild(tr);
@@ -715,7 +834,7 @@
     renderStats();
   }
 
-  document.getElementById("books-tbody").addEventListener("click", function(e){
+  document.getElementById("books-tbody").addEventListener("click", async function(e){
     var btn = e.target.closest(".mini-btn");
     if (!btn) return;
     var id = btn.getAttribute("data-id");
@@ -723,24 +842,85 @@
     var book = books.find(function(b){ return b.id === id; });
     if (!book) return;
 
-    if (action === "emprestar"){
-      var disponiveis = Number(book.quantidade) - Number(book.emprestados);
-      if (disponiveis > 0){
-        book.emprestados += 1;
-        showToast('"'+book.titulo+'" emprestado.');
-      }
-    } else if (action === "devolver"){
-      if (book.emprestados > 0){
-        book.emprestados -= 1;
-        book.devolvidos += 1;
-        showToast('"'+book.titulo+'" devolvido.');
-      }
+    if (action === "emprestar" || action === "devolver"){
+      openLoanDialog(action, book);
     } else if (action === "remover"){
-      books = books.filter(function(b){ return b.id !== id; });
-      showToast("Livro removido do acervo.");
+      if (countLoans(book.id) > 0){
+        showToast("Não é possível remover um livro emprestado.");
+        return;
+      }
+      if (await saveData("remover_livro", { id: id })){
+        showToast("Livro removido do acervo.");
+      }
     }
-    renderBooks();
-    persistBooks();
+  });
+
+  function openLoanDialog(action, book){
+    var dialog = document.getElementById("loan-dialog");
+    var select = document.getElementById("loan-person");
+    var lending = action === "emprestar";
+    var choices = lending ? clients : loans.filter(function(loan){ return loan.bookId === book.id; });
+
+    if (!choices.length){
+      showToast(lending ? "Cadastre um cliente antes de emprestar." : "Não há empréstimos deste livro para devolver.");
+      return;
+    }
+
+    select.innerHTML = "";
+    choices.forEach(function(choice){
+      var option = document.createElement("option");
+      if (lending){
+        option.value = choice.id;
+        option.textContent = choice.nome;
+      }else{
+        var client = clients.find(function(person){ return person.id === choice.clientId; });
+        option.value = choice.id;
+        option.textContent = (client ? client.nome : "Cliente não encontrado") +
+          " — " + formatLoanDate(choice.emprestadoEm);
+      }
+      select.appendChild(option);
+    });
+
+    dialog.dataset.action = action;
+    dialog.dataset.bookId = book.id;
+    document.getElementById("loan-dialog-title").textContent = lending ? "Emprestar livro" : "Registrar devolução";
+    document.getElementById("loan-select-label").textContent = lending ? "Cliente" : "Empréstimo / cliente";
+    document.getElementById("loan-confirm").textContent = lending ? "Confirmar empréstimo" : "Confirmar devolução";
+    dialog.showModal();
+  }
+
+  document.getElementById("loan-cancel").addEventListener("click", function(){
+    document.getElementById("loan-dialog").close();
+  });
+
+  document.getElementById("loan-form").addEventListener("submit", async function(e){
+    e.preventDefault();
+    var dialog = document.getElementById("loan-dialog");
+    var action = dialog.dataset.action;
+    var book = books.find(function(item){ return item.id === dialog.dataset.bookId; });
+    var selectedId = document.getElementById("loan-person").value;
+    if (!book) return;
+
+    if (action === "emprestar"){
+      if (Number(book.quantidade) - countLoans(book.id) <= 0){
+        showToast("Não há exemplares disponíveis para empréstimo.");
+        return;
+      }
+      var client = clients.find(function(person){ return person.id === selectedId; });
+      if (!client) return;
+      if (await saveData("emprestar", { bookId: book.id, clientId: client.id })){
+        dialog.close();
+        showToast('"' + book.titulo + '" emprestado para ' + client.nome + ".");
+      }
+    }else{
+      var selectedLoan = loans.find(function(loan){ return loan.id === selectedId && loan.bookId === book.id; });
+      if (!selectedLoan) return;
+      var returnedBy = clients.find(function(person){ return person.id === selectedLoan.clientId; });
+      if (await saveData("devolver", { loanId: selectedId })){
+        dialog.close();
+        showToast('"' + book.titulo + '" devolvido por ' + (returnedBy ? returnedBy.nome : "cliente") + ".");
+      }
+    }
   });
 
   // ---------- render: staff ----------
@@ -763,7 +943,7 @@
         '<div class="avatar">'+initials+'</div>'+
         '<div class="staff-info">'+
           '<div class="name">'+escapeHtml(f.nome)+'</div>'+
-          '<div class="role">'+escapeHtml(f.cargo || "Cargo não informado")+(f.matricula ? " · Mat. "+escapeHtml(f.matricula) : "")+'</div>'+
+          '<div class="role">Funcionário'+(f.matricula ? " · Mat. "+escapeHtml(f.matricula) : "")+'</div>'+
         '</div>'+
         '<div class="staff-meta">'+(f.telefone ? escapeHtml(f.telefone)+'<br>' : '')+(f.email ? escapeHtml(f.email) : '')+'</div>'+
         '<button class="mini-btn danger" data-action="remover-func" data-id="'+f.id+'">Remover</button>';
@@ -771,58 +951,96 @@
     });
   }
 
-  document.getElementById("staff-list").addEventListener("click", function(e){
+  document.getElementById("staff-list").addEventListener("click", async function(e){
     var btn = e.target.closest(".mini-btn");
     if (!btn) return;
     var id = btn.getAttribute("data-id");
-    staff = staff.filter(function(f){ return f.id !== id; });
-    renderStaff();
-    persistStaff();
-    showToast("Funcionário removido.");
+    if (await saveData("remover_funcionario", { id: id })){
+      showToast("Funcionário removido.");
+    }
   });
 
   // ---------- forms ----------
-  document.getElementById("form-livro").addEventListener("submit", function(e){
+  document.getElementById("form-livro").addEventListener("submit", async function(e){
     e.preventDefault();
     var titulo = document.getElementById("l-titulo").value.trim();
     var autor = document.getElementById("l-autor").value.trim();
     var genero = document.getElementById("l-genero").value.trim();
-    var isbn = document.getElementById("l-isbn").value.trim();
     var quantidade = parseInt(document.getElementById("l-quantidade").value, 10) || 1;
 
     if (!titulo || !autor){ return; }
 
-    books.push({ id: uid(), titulo: titulo, autor: autor, genero: genero, isbn: isbn, quantidade: quantidade, emprestados: 0, devolvidos: 0 });
-    persistBooks();
-    renderBooks();
+    if (!await saveData("cadastrar_livro", {
+      titulo: titulo,
+      autor: autor,
+      genero: genero,
+      quantidade: quantidade
+    })){
+      return;
+    }
 
     document.getElementById("form-livro").reset();
     document.getElementById("l-quantidade").value = 1;
     var msg = document.getElementById("l-msg");
     msg.textContent = '"'+titulo+'" cadastrado com sucesso.';
     setTimeout(function(){ msg.textContent = ""; }, 3000);
-    showToast("Livro cadastrado no acervo.");
+    showToast("Livro cadastrado no banco de dados.");
   });
 
-  document.getElementById("form-func").addEventListener("submit", function(e){
+  document.getElementById("form-cliente").addEventListener("submit", async function(e){
+    e.preventDefault();
+    var nome = document.getElementById("c-nome").value.trim();
+    var telefone = document.getElementById("c-telefone").value.trim();
+    var email = document.getElementById("c-email").value.trim();
+    var cpf = document.getElementById("c-cpf").value.trim();
+    var endereco = document.getElementById("c-endereco").value.trim();
+    var senha = document.getElementById("c-senha").value;
+    if (!nome || !telefone || !cpf || !endereco || !senha) return;
+
+    if (!await saveData("cadastrar_cliente", {
+      nome: nome,
+      telefone: telefone,
+      email: email,
+      cpf: cpf,
+      endereco: endereco,
+      senha: senha
+    })){
+      return;
+    }
+    document.getElementById("form-cliente").reset();
+    var msg = document.getElementById("c-msg");
+    msg.textContent = nome + " cadastrado(a) com sucesso.";
+    setTimeout(function(){ msg.textContent = ""; }, 3000);
+    showToast("Cliente cadastrado no banco de dados.");
+  });
+
+  document.getElementById("form-func").addEventListener("submit", async function(e){
     e.preventDefault();
     var nome = document.getElementById("f-nome").value.trim();
-    var cargo = document.getElementById("f-cargo").value;
     var matricula = document.getElementById("f-matricula").value.trim();
     var telefone = document.getElementById("f-telefone").value.trim();
+    var cpf = document.getElementById("f-cpf").value.trim();
     var email = document.getElementById("f-email").value.trim();
+    var senha = document.getElementById("f-senha").value;
 
-    if (!nome || !cargo){ return; }
+    if (!nome || !telefone || !cpf || !senha){ return; }
 
-    staff.push({ id: uid(), nome: nome, cargo: cargo, matricula: matricula, telefone: telefone, email: email });
-    persistStaff();
-    renderStaff();
+    if (!await saveData("cadastrar_funcionario", {
+      nome: nome,
+      matricula: matricula,
+      telefone: telefone,
+      cpf: cpf,
+      email: email,
+      senha: senha
+    })){
+      return;
+    }
 
     document.getElementById("form-func").reset();
     var msg = document.getElementById("f-msg");
     msg.textContent = nome+" cadastrado(a) com sucesso.";
     setTimeout(function(){ msg.textContent = ""; }, 3000);
-    showToast("Funcionário cadastrado.");
+    showToast("Funcionário cadastrado no banco de dados.");
   });
 
   function escapeHtml(str){

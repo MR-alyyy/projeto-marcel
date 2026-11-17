@@ -99,43 +99,6 @@ foreach ($livros as $livro) {
 }
 
 
-/* =========================================================
-   FUNCIONÁRIOS
-========================================================= */
-
-$funcionarios = [];
-
-
-$sqlFuncionarios = "
-    SELECT nome
-    FROM funcionario
-    ORDER BY nome ASC
-";
-
-
-$resultadoFuncionarios =
-    mysqli_query(
-        $conexao,
-        $sqlFuncionarios
-    );
-
-
-if ($resultadoFuncionarios) {
-
-    while (
-        $funcionario =
-        mysqli_fetch_assoc(
-            $resultadoFuncionarios
-        )
-    ) {
-
-        $funcionarios[] =
-            $funcionario;
-
-    }
-
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -1062,20 +1025,12 @@ tbody tr:hover {
         </button>
 
 
-        <button
+        <a
+            href="clientes.php?origem=funcionario"
             class="nav-btn"
-            onclick="mostrarTela('cadastro-funcionario', this)"
         >
-            👤 Cadastrar funcionário
-        </button>
-
-
-        <button
-            class="nav-btn"
-            onclick="mostrarTela('funcionarios', this)"
-        >
-            👥 Funcionários
-        </button>
+            👥 Clientes e empréstimos
+        </a>
 
 
         <a
@@ -1608,251 +1563,6 @@ tbody tr:hover {
 </section>
 
 
-<!-- =====================================================
-   CADASTRAR FUNCIONÁRIO
-===================================================== -->
-
-<section
-    id="cadastro-funcionario"
-    style="display:none;"
->
-
-
-    <div class="page-head">
-
-        <div>
-
-            <div class="eyebrow">
-                Novo colaborador
-            </div>
-
-            <h1>
-                Cadastrar funcionário
-            </h1>
-
-            <p>
-                Registre um novo funcionário.
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div class="card form-card">
-
-
-        <form
-            method="post"
-            action="cad_funcionario.php"
-        >
-
-
-            <div class="form-grid">
-
-
-                <div class="field full">
-
-                    <label>
-                        Nome completo
-                    </label>
-
-                    <input
-                        type="text"
-                        name="nome"
-                        placeholder="Nome completo"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="field full">
-
-                    <label>
-                        Senha
-                    </label>
-
-                    <input
-                        type="password"
-                        name="senha"
-                        placeholder="Senha"
-                        required
-                    >
-
-                </div>
-
-
-            </div>
-
-
-            <button
-                type="submit"
-                class="btn-primary"
-            >
-
-                Cadastrar funcionário
-
-            </button>
-
-
-        </form>
-
-
-    </div>
-
-
-</section>
-
-
-<!-- =====================================================
-   FUNCIONÁRIOS
-===================================================== -->
-
-<section
-    id="funcionarios"
-    style="display:none;"
->
-
-
-    <div class="page-head">
-
-        <div>
-
-            <div class="eyebrow">
-                Equipe
-            </div>
-
-            <h1>
-                Funcionários cadastrados
-            </h1>
-
-            <p>
-                Funcionários registrados no sistema.
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div class="card">
-
-
-        <div class="staff-list">
-
-
-        <?php if (empty($funcionarios)): ?>
-
-
-            <div
-                style="
-                    padding:50px;
-                    text-align:center;
-                    color:var(--ink-soft);
-                "
-            >
-
-                👤 Nenhum funcionário cadastrado.
-
-            </div>
-
-
-        <?php else: ?>
-
-
-            <?php foreach (
-                $funcionarios
-                as $funcionario
-            ): ?>
-
-
-                <?php
-
-                $nome =
-                    $funcionario['nome'];
-
-                $partes =
-                    preg_split(
-                        '/\s+/',
-                        trim($nome)
-                    );
-
-                $iniciais = '';
-
-                foreach (
-                    array_slice(
-                        $partes,
-                        0,
-                        2
-                    )
-                    as $parte
-                ) {
-
-                    $iniciais .=
-                        strtoupper(
-                            substr(
-                                $parte,
-                                0,
-                                1
-                            )
-                        );
-
-                }
-
-                ?>
-
-
-                <div class="staff-row">
-
-
-                    <div class="avatar">
-
-                        <?= htmlspecialchars(
-                            $iniciais
-                        ) ?>
-
-                    </div>
-
-
-                    <div class="staff-info">
-
-                        <div class="name">
-
-                            <?= htmlspecialchars(
-                                $nome
-                            ) ?>
-
-                        </div>
-
-
-                        <div class="role">
-
-                            Funcionário da biblioteca
-
-                        </div>
-
-                    </div>
-
-
-                </div>
-
-
-            <?php endforeach; ?>
-
-
-        <?php endif; ?>
-
-
-        </div>
-
-
-    </div>
-
-
-</section>
-
-
 </main>
 
 
@@ -1871,11 +1581,7 @@ function mostrarTela(
 
         'acervo',
 
-        'cadastro-livro',
-
-        'cadastro-funcionario',
-
-        'funcionarios'
+        'cadastro-livro'
 
     ];
 

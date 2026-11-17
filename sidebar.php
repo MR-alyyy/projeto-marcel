@@ -19,9 +19,10 @@ if ($sidebarManager) {
     $sidebarTitle = 'Área do gerente';
 } else {
     $sidebarLinks = [
-        ['page' => 'menu_fun.php', 'href' => 'menu_fun.php', 'icon' => '⌂', 'label' => 'Menu funcionário'],
-        ['page' => 'cad_livros.php', 'href' => 'cad_livros.php', 'icon' => '＋', 'label' => 'Cadastrar livro'],
+        ['page' => 'tela_funcionario.php', 'href' => 'tela_funcionario.php', 'icon' => '⌂', 'label' => 'Painel funcionário'],
+        ['page' => 'cad_livros.php', 'href' => 'cad_livros.php?origem=funcionario', 'icon' => '＋', 'label' => 'Cadastrar livro'],
         ['page' => 'cad_leitor.php', 'href' => 'cad_leitor.php?origem=funcionario', 'icon' => '♙', 'label' => 'Cadastrar cliente'],
+        ['page' => 'clientes.php', 'href' => 'clientes.php?origem=funcionario', 'icon' => '♧', 'label' => 'Clientes e empréstimos'],
         ['page' => 'gerenciamento.php', 'href' => 'gerenciamento.php', 'icon' => '▤', 'label' => 'Gerenciamento'],
         ['page' => 'buscar.php', 'href' => 'buscar.php', 'icon' => '⌕', 'label' => 'Buscar livros'],
         ['page' => 'emprestar_livro.php', 'href' => 'emprestar_livro.php', 'icon' => '⇥', 'label' => 'Emprestar livro'],
@@ -31,7 +32,7 @@ if ($sidebarManager) {
 }
 ?>
 <aside class="ui-sidebar" aria-label="Navegação da biblioteca">
-    <a class="ui-sidebar-brand" href="<?php echo $sidebarManager ? 'menu_gerente.php' : 'menu_fun.php'; ?>">
+    <a class="ui-sidebar-brand" href="<?php echo $sidebarManager ? 'menu_gerente.php' : 'tela_funcionario.php'; ?>">
         <span class="ui-sidebar-mark" aria-hidden="true">F</span>
         <span>Fichário</span>
     </a>

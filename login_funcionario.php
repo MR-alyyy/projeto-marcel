@@ -604,10 +604,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["entrar"])) {
 
                 <div class="links-footer">
 
-                    <a href="cad_funcionario.php">
-                        Cadastrar-se
-                    </a>
-
+                 
                 </div>
 
             </form>
